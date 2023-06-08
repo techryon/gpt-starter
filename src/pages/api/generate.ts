@@ -10,10 +10,12 @@ const openai = new OpenAIApi(configuration);
 
 const generateAction = async (req: NextApiRequest, res: NextApiResponse) => {
   const input = req.body.apiInput;
+  const input2 = req.body.api2Input;
   console.log(input);
+  console.log('### input2 =', input2);
 
   // !STARTERCONF - change the following prompt based on your own use case
-  const prompt = `${input}`;
+  const prompt = `${input} ${input2}`;
 
   console.log(`Prompt being sent to OpenAI: ${prompt}`);
 

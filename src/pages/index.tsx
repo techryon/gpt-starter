@@ -12,6 +12,7 @@ import Seo from '@/components/Seo';
 
 export default function HomePage() {
   const [apiInput, setApiInput] = useLocalStorage<string>('apiInput', '');
+  const [api2Input, setApi2Input] = useLocalStorage<string>('api2Input', '');
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiOutput, setApiOutput] = useLocalStorage<string>('apiOutput', '');
   const [mounted, setMounted] = useState(false);
@@ -21,10 +22,12 @@ export default function HomePage() {
   }, []);
 
   const callGenerateEndpoint = async () => {
+    // Set loading flag
     setIsGenerating(true);
 
-    console.log('Calling API with input:', apiInput);
+    console.log('Calling API with input:', apiInput, api2Input);
 
+    // Do request
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -33,6 +36,7 @@ export default function HomePage() {
         },
         body: JSON.stringify({
           apiInput,
+          api2Input, // This is the text input state
         }),
       });
 
@@ -91,6 +95,13 @@ export default function HomePage() {
                 className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
                 value={apiInput}
                 onChange={(event) => setApiInput(event.target.value)}
+              />
+              <textarea
+                rows={4}
+                placeholder='Enter your 2nd prompt here...'
+                className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
+                value={api2Input}
+                onChange={(event) => setApi2Input(event.target.value)}
               />
             </div>
             <Button
