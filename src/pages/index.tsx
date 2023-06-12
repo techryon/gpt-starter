@@ -11,8 +11,8 @@ import Seo from '@/components/Seo';
 // to customize the default configuration.
 
 export default function HomePage() {
-  const [apiInput, setApiInput] = useLocalStorage<string>('apiInput', '');
-  const [api2Input, setApi2Input] = useLocalStorage<string>('api2Input', '');
+  const [exampleOne, setExampleOne] = useLocalStorage<string>('exampleOne', '');
+  const [exampleTwo, setExampleTwo] = useLocalStorage<string>('exampleTwo', '');
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiOutput, setApiOutput] = useLocalStorage<string>('apiOutput', '');
   const [mounted, setMounted] = useState(false);
@@ -25,7 +25,7 @@ export default function HomePage() {
     // Set loading flag
     setIsGenerating(true);
 
-    console.log('Calling API with input:', apiInput, api2Input);
+    console.log('Calling API with input:', exampleOne, exampleTwo);
 
     // Do request
     try {
@@ -35,8 +35,8 @@ export default function HomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          apiInput,
-          api2Input, // This is the text input state
+          exampleOne,
+          exampleTwo,
         }),
       });
 
@@ -84,24 +84,24 @@ export default function HomePage() {
       <main>
         <section className='bg-dark'>
           <div className='layout relative flex min-h-screen flex-col items-center py-12 text-center text-white'>
-            <h1 className='mt-4'>My GPT Thing</h1>
+            <h1 className='mt-4'>Code difference summarizer</h1>
             <p className='mt-2 text-sm text-gray-300'>
-              Description of what my GPT thing does{' '}
+              Paste in two code blocks and see whats changed{' '}
             </p>
             <div className='w-full'>
               <textarea
                 rows={4}
-                placeholder='Enter your prompt here...'
+                placeholder='Enter code block here...'
                 className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
-                value={apiInput}
-                onChange={(event) => setApiInput(event.target.value)}
+                value={exampleOne}
+                onChange={(event) => setExampleOne(event.target.value)}
               />
               <textarea
                 rows={4}
-                placeholder='Enter your 2nd prompt here...'
+                placeholder='Enter your changed code block here...'
                 className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
-                value={api2Input}
-                onChange={(event) => setApi2Input(event.target.value)}
+                value={exampleTwo}
+                onChange={(event) => setExampleTwo(event.target.value)}
               />
             </div>
             <Button

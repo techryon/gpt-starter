@@ -9,13 +9,13 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const generateAction = async (req: NextApiRequest, res: NextApiResponse) => {
-  const input = req.body.apiInput;
-  const input2 = req.body.api2Input;
+  const input = req.body.exampleOne;
+  const input2 = req.body.exampleTwo;
   console.log(input);
   console.log('### input2 =', input2);
 
   // !STARTERCONF - change the following prompt based on your own use case
-  const prompt = `${input} ${input2}`;
+  const prompt = `Below are two React code examples. Summarize the changes in example 2 in 2 sentences. Example 1:${input} Example 2:${input2}`;
 
   console.log(`Prompt being sent to OpenAI: ${prompt}`);
 
