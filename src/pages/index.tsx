@@ -11,8 +11,12 @@ import Seo from '@/components/Seo';
 // to customize the default configuration.
 
 export default function HomePage() {
-  const [exampleOne, setExampleOne] = useLocalStorage<string>('exampleOne', '');
-  const [exampleTwo, setExampleTwo] = useLocalStorage<string>('exampleTwo', '');
+  //commenting the below which stores values from the two text boxes
+  // const [exampleOne, setExampleOne] = useLocalStorage<string>('exampleOne', '');
+  // const [exampleTwo, setExampleTwo] = useLocalStorage<string>('exampleTwo', '');
+
+  //new state value for the new text field to take the URL
+  const [prURL, setPRURL] = useLocalStorage<string>('prURL', '');
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiOutput, setApiOutput] = useLocalStorage<string>('apiOutput', '');
   const [mounted, setMounted] = useState(false);
@@ -25,7 +29,7 @@ export default function HomePage() {
     // Set loading flag
     setIsGenerating(true);
 
-    console.log('Calling API with input:', exampleOne, exampleTwo);
+    console.log('Calling API with input:', prURL);
 
     // Do request
     try {
@@ -35,8 +39,7 @@ export default function HomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          exampleOne,
-          exampleTwo,
+          prURL,
         }),
       });
 
@@ -88,7 +91,8 @@ export default function HomePage() {
             <p className='mt-2 text-sm text-gray-300'>
               Paste in two code blocks and see whats changed{' '}
             </p>
-            <div className='w-full'>
+            {/*commented the existing text boxes*/}
+            {/* <div className='w-full'>
               <textarea
                 rows={4}
                 placeholder='Enter code block here...'
@@ -102,6 +106,15 @@ export default function HomePage() {
                 className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
                 value={exampleTwo}
                 onChange={(event) => setExampleTwo(event.target.value)}
+              />
+            </div> */}
+            <div className='w-full'>
+              <textarea
+                rows={2}
+                placeholder='Paste your PR URL here...'
+                className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
+                value={prURL}
+                onChange={(event) => setPRURL(event.target.value)}
               />
             </div>
             <Button

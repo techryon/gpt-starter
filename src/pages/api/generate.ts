@@ -9,10 +9,28 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const generateAction = async (req: NextApiRequest, res: NextApiResponse) => {
-  const input = req.body.exampleOne;
-  const input2 = req.body.exampleTwo;
-  console.log(input);
-  console.log('### input2 =', input2);
+  // const input = req.body.exampleOne;
+  // const input2 = req.body.exampleTwo;
+  const prURL = req.body.prURL;
+  console.log(prURL);
+  //console.log('### input2 =', input2);
+
+  // fetch the PR using provided URL
+  // Do request
+  try {
+    const response = await fetch(prURL, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response);
+    const data = await response.text();
+    console.log(`API Response: ${data}`);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
 
   // !STARTERCONF - change the following prompt based on your own use case
   const prompt = `Below are two React code examples. Summarize the changes in example 2 in 2 sentences. Example 1:${input} Example 2:${input2}`;
