@@ -11,29 +11,41 @@ const openai = new OpenAIApi(configuration);
 const generateAction = async (req: NextApiRequest, res: NextApiResponse) => {
   // const input = req.body.exampleOne;
   // const input2 = req.body.exampleTwo;
+  console.log('Here');
   const prURL = req.body.prURL;
   console.log(prURL);
   //console.log('### input2 =', input2);
 
   // fetch the PR using provided URL
   // Do request
+  let diffContent = '';
+
   try {
     const response = await fetch(prURL, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {},
     });
-    console.log(response);
+
     const data = await response.text();
     console.log(`API Response: ${data}`);
+    diffContent = data;
   } catch (error) {
     console.log(error);
     return;
   }
 
   // !STARTERCONF - change the following prompt based on your own use case
-  const prompt = `Below are two React code examples. Summarize the changes in example 2 in 2 sentences. Example 1:${input} Example 2:${input2}`;
+  const prompt = `Here is a github diff. Can you summerize the changes.
+
+  Do not include references to the numer of insertions and deletions.
+  Do not include any reference to the number of lines that have been added or removed in the summary.
+
+  Make sure to identify any renamed or moved components/files.
+
+  Each changed file in the diff should output a seperate paragraph/summary.
+  
+  Diff: ${diffContent}
+  `;
 
   console.log(`Prompt being sent to OpenAI: ${prompt}`);
 
