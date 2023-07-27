@@ -6,19 +6,25 @@ const TextButtonVariant = ['primary', 'basic'] as const;
 
 type TextButtonProps = {
   variant?: (typeof TextButtonVariant)[number];
+  isLoading: boolean;
 } & React.ComponentPropsWithRef<'button'>;
 
-const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(
+const TextButtonV2 = React.forwardRef<HTMLButtonElement, TextButtonProps>(
   (
     {
       children,
       className,
       variant = 'primary',
+      isLoading,
       disabled: buttonDisabled,
       ...rest
     },
     ref
   ) => {
+    if (isLoading) {
+      return null;
+    }
+
     return (
       <button
         ref={ref}
@@ -49,4 +55,4 @@ const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(
   }
 );
 
-export default TextButton;
+export default TextButtonV2;
