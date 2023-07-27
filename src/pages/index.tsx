@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
 
 import useLocalStorage from '@/hooks/useLocalStorage';
 
@@ -10,6 +11,12 @@ import Seo from '@/components/Seo';
 // Before you begin editing, follow all comments with `STARTERCONF`,
 // to customize the default configuration.
 
+type URLPath = {
+  owner: string;
+  repo: string;
+  pullNumber: string;
+};
+
 export default function HomePage() {
   //commenting the below which stores values from the two text boxes
   // const [exampleOne, setExampleOne] = useLocalStorage<string>('exampleOne', '');
@@ -20,10 +27,66 @@ export default function HomePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiOutput, setApiOutput] = useLocalStorage<string>('apiOutput', '');
   const [mounted, setMounted] = useState(false);
+  const [prData, setPRData] = useState({});
+
+  const [isFetchingPR, setIsFetchingPR] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Example URL https://github.com/techryon/gpt-starter/pull/1
+  // TODO: Handle broken links
+  function parseGithubURL(url: string): URLPath | undefined {
+    if (!url) {
+      return;
+    }
+    console.log('## parseGithubURL: ', url);
+    const parsedURL = new URL(url);
+    const path = parsedURL.pathname;
+
+    const paths = path.split('/').filter(Boolean);
+    const [owner, repo, _, pullNumber] = paths;
+
+    return { owner, repo, pullNumber };
+  }
+
+  async function fetchGithubPR(path: URLPath) {
+    setIsFetchingPR(true);
+    const url = `https://api.github.com/repos/${path.owner}/${path.repo}/pulls/${path.pullNumber}`;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      const { title, state, patch_url } = data;
+      setPRData({ title, state, patch_url });
+      console.log(`fetchGithubPR Response: ${JSON.stringify(data)}`);
+    } catch {
+      console.log('fetchGithubPR ERROR');
+    } finally {
+      setIsFetchingPR(false);
+    }
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const githubPath = parseGithubURL(prURL);
+
+      if (githubPath) {
+        fetchGithubPR(githubPath);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [prURL]);
+
+  const patchUrl = prData.patch_url;
 
   const callGenerateEndpoint = async () => {
     // Set loading flag
@@ -39,7 +102,7 @@ export default function HomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prURL,
+          prURL: patchUrl,
         }),
       });
 
@@ -89,8 +152,11 @@ export default function HomePage() {
           <div className='layout relative flex min-h-screen flex-col items-center py-12 text-center text-white'>
             <h1 className='mt-4'>Code difference summarizer</h1>
             <p className='mt-2 text-sm text-gray-300'>
-              Paste in two code blocks and see whats changed{' '}
+              Paste a Github pull request url and see what's changed{' '}
             </p>
+            {/* <p className='mt-2 text-sm text-gray-300'>
+              Paste in two code blocks and see whats changed{' '}
+            </p> */}
             {/*commented the existing text boxes*/}
             {/* <div className='w-full'>
               <textarea
@@ -108,14 +174,31 @@ export default function HomePage() {
                 onChange={(event) => setExampleTwo(event.target.value)}
               />
             </div> */}
-            <div className='w-full'>
-              <textarea
-                rows={2}
-                placeholder='Paste your PR URL here...'
+            <div className='flex w-full flex-row items-center justify-center'>
+              <input
                 className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
+                type='url'
+                placeholder='e.g. https://github.com/techryon/gpt-starter/pull/1'
                 value={prURL}
                 onChange={(event) => setPRURL(event.target.value)}
               />
+              {isFetchingPR && (
+                <div
+                  className='mt-6 -ml-8'
+                  // className={clsxm(
+                  //   'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+                  // )}
+                >
+                  <ImSpinner2 className='animate-spin' />
+                </div>
+              )}
+              {/* <textarea
+                rows={1}
+                placeholder='Paste your PR URL here... e.g. https://github.com/techryon/gpt-starter/pull/1'
+                className='mt-6 w-4/5 rounded-md border-orange-500 bg-dark text-gray-300 focus:border-orange-500 focus:ring-orange-500'
+                value={prURL}
+                onChange={(event) => setPRURL(event.target.value)}
+              /> */}
             </div>
             <Button
               className='mt-4'
@@ -124,7 +207,7 @@ export default function HomePage() {
               variant='outline'
               isDarkBg={true}
             >
-              Generate
+              Genterate summary ✨
             </Button>
 
             {mounted && apiOutput && (
