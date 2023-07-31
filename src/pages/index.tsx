@@ -142,6 +142,10 @@ export default function HomePage() {
       });
   };
 
+  const displayAlert = () => {
+    alert('This is an alert... Ahhh!!!');
+  };
+
   return (
     <Layout>
       {/* <Seo templateTitle='Home' /> */}
@@ -208,6 +212,14 @@ export default function HomePage() {
               isDarkBg={true}
             >
               Genterate summary ✨
+            </Button>
+            <Button
+              className='mt-4'
+              onClick={() => displayAlert()}
+              variant='outline'
+              isDarkBg={true}
+            >
+              Alert 🚨
             </Button>
 
             {mounted && apiOutput && (

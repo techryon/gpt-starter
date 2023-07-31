@@ -43,6 +43,8 @@ const generateAction = async (req: NextApiRequest, res: NextApiResponse) => {
   Make sure to identify any renamed or moved components/files.
 
   Each changed file in the diff should output a seperate paragraph/summary.
+
+  Suggest and list black box test cases.
   
   Diff: ${diffContent}
   `;
